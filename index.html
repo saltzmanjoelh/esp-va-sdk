@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <!-- Basic Page Needs
+	 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta charset="UTF-8"> 
+    <title>Espressif | Alexa</title>
+    <meta name="description" content="Add Wi-Fi credentials and Alexa refresh token to a binary blob, flashable on your ESP32 Audio Development board.">
+    <meta name="author" content="Espressif Systems">
+
+    <!-- Mobile Specific Metas
+	 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- FONT
+	 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+    <!-- CSS
+	 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="css/skeleton.css">
+    <link rel="stylesheet" href="css/normalize.css">
+
+    <!-- Favicon
+	 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="icon" type="image/ico" href="img/favicon.ico">
+    <script src="js/jquery.min.js"></script>
+  </head>
+  <body >
+    <div class="container">
+      
+      <div class="row">
+	<div class="one-half column" style="margin-top: 25%">
+          <h3>Alexa on ESP32</h3>
+
+	  <p>This utility can be used to create a flashable partition with AVS (Alexa Voice Service) OAuth2.0 token and Wi-Fi credentials for running Espressif's AVS SDK on ESP LyraTD-MSC board. This utility is to be used <b>only</b> for evaluation. For production usecases, you will have to provide your own Phone app or equivalent provisioning scheme.</p>
+
+	  <p> We encourage you to delete the generated binary file from our server, after you have successfully downloaded it. We purge all the generated files everyday</p>
+
+	  <p> Make sure that you use <b>Chrome or Safari</b> for generating the binary file.<br/>Firefox and Internet Explorer are known to have issues </p>
+
+	  <p><b>Note :</b> Please add the URL  <code>http://espressif-alexa.s3-website-us-east-1.amazonaws.com/accesstoken.html</code> to "Allowed Return URLs" under "Security Profiles" of your <a href="https://developer.amazon.com" target=_blank>developer.amazon.com</a> account before filling out the following form. </p>
+	  <hr>
+	  <form id="myform">
+	    <p>Client ID:<br/> amzn1.application-oa2-client.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
+	    <input type="clientid" name="clientid">
+	    <br/>
+	    <br/>
+	    <p>Client Secret: </p>
+	    <input type="clientsec" name="clientsec">
+	    <br/>
+	    <br/>
+	    <p>Product ID/Device Type ID:</p>
+	    <input type="productid" name="productid">
+	    <br/>
+	    <br/>
+	    <p>Device Serial No:</p>
+	    <input type="serialno" name="serialno">
+	    <br/>
+	    <br/>
+	    <p>Wi-Fi SSID:</p>
+	    <input type="ssid" name="ssid">
+	    <br/>
+	    <br/>
+	    <p>Wi-Fi Passphrase:</p>
+	    <input type="password" name="passphrase">
+	    <br/>
+	    <br/>
+	    <input type="submit" style="background-color: #d12e26; color: #fff" value="Build Image">
+	  </form>
+	  <hr/>
+	</div>
+      </div>
+    </div>
+    <script>
+      function GetURLParameter(sParam) {
+      var sPageURL = window.location.search.substring(1);
+      var sURLVariables = sPageURL.split('&');
+      for (var i = 0; i < sURLVariables.length; i++) {
+      			  var sParameterName = sURLVariables[i].split('=');
+      			  if (sParameterName[0] == sParam) {
+      			  return sParameterName[1];}}}
+			  
+			  </script>
+    <script>
+      var form = document.getElementById("myform");
+      var del = document.getElementById("delete");
+      form.onsubmit = function (e) {
+      e.preventDefault();
+      // collect the form data while iterating over the inputs
+      var data = {};
+      for (var i = 0, ii = form.length; i < ii; ++i) {
+					    var input = form[i];
+					    if (input.name) {
+					    data[input.name] = input.value;
+					    sessionStorage.setItem(input.name, input.value);
+					    }
+					    }
+					    //data['code'] = GetURLParameter('code');
+					    console.log(data);
+					    addData(data);					    
+					    }
+					    function addData(data){// pass your data in method
+					    $.ajax({
+					    async: true,
+					    type: "POST",
+					    url: "https://td0d5ywhy7.execute-api.us-east-1.amazonaws.com/dev/clicker",
+					    data: JSON.stringify(data),// now data come in this function
+					    contentType: "application/json; charset=utf-8",
+					    crossDomain: true,
+					    dataType: "json",
+					    //traditional: true,
+					    success: function (data, status, jqXHR) {
+                                            console.log(data);
+					    console.log(status.code);
+					    form.style.display = "none";
+					    alert("success");// write success in " "
+					    },
+					    error: function (jqXHR, status) {
+					    console.log(jqXHR.responseText);
+					    window.location=jqXHR.responseText;
+					    }
+					    });
+					    }
+    </script>
+  </body>
+</html>
+

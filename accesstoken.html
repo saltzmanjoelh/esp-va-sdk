@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <!-- Basic Page Needs
+	 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta charset="UTF-8"> 
+    <title>Espressif | Alexa</title>
+    <meta name="description" content="Add Wi-Fi credentials and Alexa refresh token to a binary blob, flashable on your ESP32 Audio Development board.">
+    <meta name="author" content="Espressif Systems">
+
+    <!-- Mobile Specific Metas
+	 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- FONT
+	 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+    <!-- CSS
+	 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="css/skeleton.css">
+    <link rel="stylesheet" href="css/normalize.css">
+
+    <!-- Favicon
+	 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="icon" type="image/ico" href="img/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="js/jquery.min.js"></script>
+  </head>
+  <body >
+    <div class="container">
+      
+      <div class="row">
+	<div class="one-half column" style="margin-top: 25%">
+          <h3>Alexa on ESP32</h3>
+
+	  <p> We encourage you to delete the generated binary file from our server, after you have successfully downloaded it. We purge all the generated files everyday</p>
+
+	  <p> Make sure that you use <b>Chrome or Safari</b> for generating the binary file.<br/>Firefox and Internet Explorer are known to have issues </p>
+	  <div id="download">
+	    <p>Download your partition.bin from <button style="background-color: #d12e26;color: #fff"><a href="#" id = "dw" style="color: #fff" type="binary/octet-stream">here</a></button></p>
+	    <br/>
+	    <br/>
+	    <p>Please click <a href="#" id = "delete">here</a> to delete the generated file from the server. We purge the files everyday.</p>
+	  </div>
+	  <p><a href="http://espressif-alexa.s3-website-us-east-1.amazonaws.com"><i class="fa fa-home"></i></a></p>
+	  
+	</div>
+      </div>
+    </div>
+    <script>
+//      document.getElementById("code").innerHTML = "Code:  "+ GetURLParameter('code') ;
+      function GetURLParameter(sParam) {
+      var sPageURL = window.location.search.substring(1);
+      var sURLVariables = sPageURL.split('&');
+      for (var i = 0; i < sURLVariables.length; i++) {
+      			  var sParameterName = sURLVariables[i].split('=');
+      			  if (sParameterName[0] == sParam) {
+      			  return sParameterName[1];}}}
+			  
+			  </script>
+    <script>
+      var form = document.getElementById("myform");
+      var del = document.getElementById("delete");
+      var dw = document.getElementById("download");
+      dw.style.display = "none";
+      var data = {};
+      data["code"] = GetURLParameter('code');
+      data["clientid"] = sessionStorage.getItem("clientid");
+      data["clientsec"] = sessionStorage.getItem("clientsec");
+      data["productid"] = sessionStorage.getItem("productid");
+      data["serialno"] = sessionStorage.getItem("serialno");
+      data["ssid"] = sessionStorage.getItem("ssid");
+      data["passphrase"] = sessionStorage.getItem("passphrase");
+      console.log(data);
+      addData(data);
+      function addData(data){// pass your data in method
+      $.ajax({
+      async: true,
+      type: "POST",
+      url: "https://td0d5ywhy7.execute-api.us-east-1.amazonaws.com/dev/redirector",
+      data: JSON.stringify(data),// now data come in this function
+      contentType: "application/json; charset=utf-8",
+      crossDomain: true,
+      dataType: "json",
+      //traditional: true,
+      success: function (data, status, jqXHR) {
+      console.log("Inside success");
+      console.log(data);
+      console.log(status.code);
+      alert("success");// write success in " "
+      },
+      error: function (jqXHR, status) {
+      console.log("Inside error");
+      console.log(jqXHR.responseText);
+      document.getElementById("delete").href="https://td0d5ywhy7.execute-api.us-east-1.amazonaws.com/dev/deletebin?code=configData_"+GetURLParameter('code')+".bin";
+      document.getElementById("dw").href=jqXHR.responseText;
+      dw.style.display = "block";
+      
+      sessionStorage.removeItem("clientid");
+      sessionStorage.removeItem("clientsec");
+      sessionStorage.removeItem("productid");
+      sessionStorage.removeItem("serialno");
+      sessionStorage.removeItem("ssid");
+      sessionStorage.removeItem("passphrase");
+      }
+      });
+      }
+    </script>
+  </body>
+</html>
+
