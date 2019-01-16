@@ -1,6 +1,6 @@
 ## ChangeLog
 
-### v1.0b1r7 (Beta) - 2018-01-08
+### v1.0b1r7 (Beta) - 2019-01-08
 
 **Enhancements**
 
